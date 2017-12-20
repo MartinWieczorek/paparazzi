@@ -136,11 +136,56 @@ static void sys_tick_handler(void)
     if (sys_time.timer[i].in_use &&
         sys_time.nb_tick >= sys_time.timer[i].end_time) {
       sys_time.timer[i].end_time += sys_time.timer[i].duration;
-      sys_time.timer[i].elapsed = TRUE;
+      sys_time.timer[i].elapsed = true;
       /* call registered callbacks, WARNING: they will be executed in the sys_time thread! */
       if (sys_time.timer[i].cb) {
         sys_time.timer[i].cb(i);
       }
     }
   }
+}
+
+/**
+ * Get the time in microseconds since startup.
+ * WARNING: overflows after 71min34seconds!
+ * @return current system time as uint32_t
+ */
+uint32_t get_sys_time_usec(void)
+{
+  /* get current time */
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC, &now);
+
+  /* time difference to startup */
+  time_t d_sec = now.tv_sec - startup_time.tv_sec;
+  long d_nsec = now.tv_nsec - startup_time.tv_nsec;
+
+  /* wrap if negative nanoseconds */
+  if (d_nsec < 0) {
+    d_sec -= 1;
+    d_nsec += 1000000000L;
+  }
+  return d_sec * 1000000 + d_nsec/1000;
+}
+
+/**
+ * Get the time in milliseconds since startup.
+ * @return milliseconds since startup as uint32_t
+ */
+uint32_t get_sys_time_msec(void)
+{
+  /* get current time */
+  struct timespec now;
+  clock_gettime(CLOCK_MONOTONIC, &now);
+
+  /* time difference to startup */
+  time_t d_sec = now.tv_sec - startup_time.tv_sec;
+  long d_nsec = now.tv_nsec - startup_time.tv_nsec;
+
+  /* wrap if negative nanoseconds */
+  if (d_nsec < 0) {
+    d_sec -= 1;
+    d_nsec += 1000000000L;
+  }
+  return d_sec * 1000 + d_nsec/1000000;
 }

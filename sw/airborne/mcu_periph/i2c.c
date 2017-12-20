@@ -250,12 +250,12 @@ void i2c_init(struct i2c_periph *p)
 
 #if PERIODIC_TELEMETRY
   // the first to register do it for the others
-  register_periodic_telemetry(DefaultPeriodic, "I2C_ERRORS", send_i2c_err);
+  register_periodic_telemetry(DefaultPeriodic, PPRZ_MSG_ID_I2C_ERRORS, send_i2c_err);
 #endif
 }
 
 
-bool_t i2c_transmit(struct i2c_periph *p, struct i2c_transaction *t,
+bool i2c_transmit(struct i2c_periph *p, struct i2c_transaction *t,
                     uint8_t s_addr, uint8_t len)
 {
   t->type = I2CTransTx;
@@ -265,7 +265,7 @@ bool_t i2c_transmit(struct i2c_periph *p, struct i2c_transaction *t,
   return i2c_submit(p, t);
 }
 
-bool_t i2c_receive(struct i2c_periph *p, struct i2c_transaction *t,
+bool i2c_receive(struct i2c_periph *p, struct i2c_transaction *t,
                    uint8_t s_addr, uint16_t len)
 {
   t->type = I2CTransRx;
@@ -275,7 +275,7 @@ bool_t i2c_receive(struct i2c_periph *p, struct i2c_transaction *t,
   return i2c_submit(p, t);
 }
 
-bool_t i2c_transceive(struct i2c_periph *p, struct i2c_transaction *t,
+bool i2c_transceive(struct i2c_periph *p, struct i2c_transaction *t,
                       uint8_t s_addr, uint8_t len_w, uint16_t len_r)
 {
   t->type = I2CTransTxRx;

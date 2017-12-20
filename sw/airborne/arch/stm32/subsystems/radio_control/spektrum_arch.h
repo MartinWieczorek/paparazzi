@@ -52,8 +52,12 @@
 #ifndef RADIO_YAW
 #define RADIO_YAW        3
 #endif
+#ifndef RADIO_GEAR
 #define RADIO_GEAR       4
+#endif
+#ifndef RADIO_FLAP
 #define RADIO_FLAP       5
+#endif
 #define RADIO_AUX1       5
 #define RADIO_AUX2       6
 #define RADIO_AUX3       7
@@ -65,7 +69,11 @@
 /* reverse some channels to suit Paparazzi conventions          */
 /* the maximum number of channels a Spektrum can transmit is 12 */
 #ifndef RADIO_CONTROL_SPEKTRUM_SIGNS
-#define RADIO_CONTROL_SPEKTRUM_SIGNS {1,-1,-1,-1,1,-1,1,1,1,1,1,1}
+#ifdef RADIO_CONTROL_SPEKTRUM_OLD_SIGNS
+#define RADIO_CONTROL_SPEKTRUM_SIGNS {1,-1,-1,-1,1,-1,1,1,1,1,1,1} // As most transmitters are sold
+#else
+#define RADIO_CONTROL_SPEKTRUM_SIGNS {1,1,1,1,1,1,1,1,1,1,1,1} // PPRZ sign convention
+#endif
 #endif
 
 /* really for a 9 channel transmitter
@@ -75,5 +83,7 @@
 #endif
 
 extern void RadioControlEventImp(void (*_received_frame_handler)(void));
+/* initialise the uarts used by the parser */
+void SpektrumUartInit(void);
 
 #endif /* RADIO_CONTROL_SPEKTRUM_ARCH_H */

@@ -26,17 +26,15 @@
 #include "superbitrf_rc.h"
 #include "subsystems/radio_control.h"
 
+INFO("Radio-Control now follows PPRZ sign convention: this means you might need to reverese some channels in your transmitter: RollRight / PitchUp / YawRight / FullThrottle / Auto2 are positive deflections")
+
 /**
  * Initialization
  */
-//#if DATALINK == SUPERBITRF
-//void radio_control_impl_init(void) {}
-//#else
 void radio_control_impl_init(void)
 {
   superbitrf_init();
 }
-//#endif
 
 /** normalize superbitrf rc_values to radio values */
 static void superbitrf_rc_normalize(int16_t *in, int16_t *out, uint8_t count)
@@ -47,7 +45,7 @@ static void superbitrf_rc_normalize(int16_t *in, int16_t *out, uint8_t count)
       out[i] = (in[i] + MAX_PPRZ) / 2;
       Bound(out[i], 0, MAX_PPRZ);
     } else {
-      out[i] = -in[i];
+      out[i] = in[i];
       Bound(out[i], MIN_PPRZ, MAX_PPRZ);
     }
   }
@@ -65,6 +63,6 @@ void radio_control_impl_event(void (* _received_frame_handler)(void))
     superbitrf_rc_normalize(superbitrf.rc_values, radio_control.values,
                             superbitrf.num_channels);
     _received_frame_handler();
-    superbitrf.rc_frame_available = FALSE;
+    superbitrf.rc_frame_available = false;
   }
 }

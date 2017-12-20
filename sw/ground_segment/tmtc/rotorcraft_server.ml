@@ -28,7 +28,7 @@ open Aircraft
 open Latlong
 module LL = Latlong
 module U = Unix
-module Dl_Pprz = Pprz.Messages (struct let name = "datalink" end)
+module Dl_Pprz = PprzLink.Messages (struct let name = "datalink" end)
 
 
 (* FIXME: bound the loop *)
@@ -42,37 +42,37 @@ let rec norm_course =
 
 let fvalue = fun x ->
   match x with
-      Pprz.Float x -> x
-    | Pprz.Int32 x -> Int32.to_float x
-    | Pprz.Int64 x -> Int64.to_float x
-    | Pprz.Int x -> float_of_int x
-    | _ -> failwith (sprintf "Receive.log_and_parse: float expected, got '%s'" (Pprz.string_of_value x))
+      PprzLink.Float x -> x
+    | PprzLink.Int32 x -> Int32.to_float x
+    | PprzLink.Int64 x -> Int64.to_float x
+    | PprzLink.Int x -> float_of_int x
+    | _ -> failwith (sprintf "Receive.log_and_parse: float expected, got '%s'" (PprzLink.string_of_value x))
 
 
 let ivalue = fun x ->
   match x with
-      Pprz.Int x -> x
-    | Pprz.Int32 x -> Int32.to_int x
-    | Pprz.Int64 x -> Int64.to_int x
+      PprzLink.Int x -> x
+    | PprzLink.Int32 x -> Int32.to_int x
+    | PprzLink.Int64 x -> Int64.to_int x
     | _ -> failwith "Receive.log_and_parse: int expected"
 
 (*
   let i32value = fun x ->
   match x with
-  Pprz.Int32 x -> x
+  PprzLink.Int32 x -> x
   | _ -> failwith "Receive.log_and_parse: int32 expected"
 *)
 
 let foi32value = fun x ->
   match x with
-      Pprz.Int32 x -> Int32.to_float x
+      PprzLink.Int32 x -> Int32.to_float x
     | _ -> failwith "Receive.log_and_parse: int32 expected"
 
 let format_string_field = fun s ->
-  let s = String.copy s in
-  for i = 0 to String.length s - 1 do
+  let s = Compat.bytes_copy s in
+  for i = 0 to Compat.bytes_length s - 1 do
     match s.[i] with
-        ' ' -> s.[i] <- '_'
+        ' ' -> Compat.bytes_set s i '_'
       | _ -> ()
   done;
   s
@@ -130,23 +130,36 @@ let hmsl_of_ref = fun nav_ref d_hmsl ->
     | _ -> 0.
 
 let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
-  let value = fun x -> try Pprz.assoc x values with Not_found -> failwith (sprintf "Error: field '%s' not found\n" x) in
+  let value = fun x -> try PprzLink.assoc x values with Not_found -> failwith (sprintf "Error: field '%s' not found\n" x) in
 
   let fvalue = fun x ->
     let f = fvalue (value x) in
     match classify_float f with
         FP_infinite | FP_nan ->
-          let msg = sprintf "Non normal number: %f in '%s %s %s'" f ac_name msg.Pprz.name (string_of_values values) in
+          let msg = sprintf "Non normal number: %f in '%s %s %s'" f ac_name msg.PprzLink.name (string_of_values values) in
           raise (Telemetry_error (ac_name, format_string_field msg))
 
       | _ -> f
   and ivalue = fun x -> ivalue (value x)
   (*and i32value = fun x -> i32value (value x)*)
   and foi32value = fun x -> foi32value (value x) in
-  if not (msg.Pprz.name = "DOWNLINK_STATUS") then
+  if not (msg.PprzLink.name = "DOWNLINK_STATUS") then
     a.last_msg_date <- U.gettimeofday ();
-  match msg.Pprz.name with
-      "ROTORCRAFT_FP" ->
+  match msg.PprzLink.name with
+      "ROTORCRAFT_FP_MIN" ->
+        begin match a.nav_ref with
+            None -> (); (* No nav_ref yet *)
+          | Some nav_ref ->
+            let north = foi32value "north" /. pos_frac
+            and east  = foi32value "east" /. pos_frac
+            and up    = foi32value "up" /. pos_frac in
+            let (geo, h) = geo_hmsl_of_ltp (LL.make_ned [| north; east; -. up |]) nav_ref a.d_hmsl in
+            a.pos <- geo;
+            a.alt <- h
+        end;
+        a.gspeed  <- fvalue "gspeed" /. 100.;
+        a.agl     <- a.alt -. (try float (Srtm.of_wgs84 a.pos) with _ -> a.ground_alt)
+    | "ROTORCRAFT_FP" ->
         begin match a.nav_ref with
             None -> (); (* No nav_ref yet *)
           | Some nav_ref ->
@@ -169,7 +182,7 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
         a.gspeed  <- sqrt(vnorth*.vnorth +. veast*.veast);
         a.climb   <- foi32value "vup" /. speed_frac;
         a.agl     <- a.alt -. (try float (Srtm.of_wgs84 a.pos) with _ -> a.ground_alt);
-        a.course  <- norm_course ((Rad>>Deg) (foi32value "psi" /. angle_frac));
+        a.course  <- norm_course (atan2 veast vnorth);
         a.heading <- norm_course (foi32value "psi" /. angle_frac);
         a.roll    <- foi32value "phi" /. angle_frac;
         a.pitch   <- foi32value "theta" /. angle_frac;
@@ -186,7 +199,7 @@ let log_and_parse = fun ac_name (a:Aircraft.aircraft) msg values ->
       a.fbw.rc_status <- get_rc_status (ivalue "rc_status");
       a.fbw.rc_rate   <- ivalue "frame_rate";
       a.gps_mode      <- check_index (ivalue "gps_status") gps_modes "GPS_MODE";
-      a.ap_mode       <- check_index (ivalue "ap_mode") rotorcraft_ap_modes "ROTORCRAFT_AP_MODE";
+      a.ap_mode       <- check_index (ivalue "ap_mode") (modes_of_aircraft a) "ROTORCRAFT_AP_MODE";
       a.kill_mode     <- ivalue "ap_motors_on" == 0;
       a.bat           <- fvalue "vsupply" /. 10.
     | "STATE_FILTER_STATUS" ->

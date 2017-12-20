@@ -65,9 +65,8 @@
 #include "state.h"
 #include "firmwares/fixedwing/nav.h"
 #include "generated/airframe.h"
-#include "firmwares/fixedwing/autopilot.h"
-#include "subsystems/ahrs.h"
-#include "subsystems/imu.h"
+#include "autopilot.h"
+#include "subsystems/abi.h"
 
 /////// DEFAULT GUIDANCE_V NECESSITIES //////
 
@@ -134,6 +133,13 @@ pprz_t v_ctl_throttle_slewed;
 float v_ctl_pitch_setpoint;
 
 
+static struct FloatQuat imu_to_body_quat;
+static struct Int32Vect3 accel_imu_meas;
+
+static abi_event accel_ev;
+static abi_event body_to_imu_ev;
+
+
 ///////////// DEFAULT SETTINGS ////////////////
 #ifndef V_CTL_ALTITUDE_MAX_CLIMB
 #define V_CTL_ALTITUDE_MAX_CLIMB 2;
@@ -152,6 +158,10 @@ INFO("V_CTL_GLIDE_RATIO not defined - default is 8.")
 #endif
 #ifndef V_CTL_MAX_ACCELERATION
 #define V_CTL_MAX_ACCELERATION 0.5
+#endif
+
+#ifndef V_CTL_ENERGY_IMU_ID
+#define V_CTL_ENERGY_IMU_ID ABI_BROADCAST
 #endif
 /////////////////////////////////////////////////
 // Automatically found airplane characteristics
@@ -190,6 +200,18 @@ static void ac_char_update(float throttle, float pitch, float climb, float accel
   }
 }
 
+static void accel_cb(uint8_t sender_id __attribute__((unused)),
+                     uint32_t stamp __attribute__((unused)),
+                     struct Int32Vect3 *accel)
+{
+  accel_imu_meas = *accel;
+}
+
+static void body_to_imu_cb(uint8_t sender_id __attribute__((unused)),
+                           struct FloatQuat *q_b2i_f)
+{
+  float_quat_invert(&imu_to_body_quat, q_b2i_f);
+}
 
 void v_ctl_init(void)
 {
@@ -256,6 +278,11 @@ void v_ctl_init(void)
 #endif
 
   v_ctl_throttle_setpoint = 0;
+
+  float_quat_identity(&imu_to_body_quat);
+
+  AbiBindMsgIMU_ACCEL_INT32(V_CTL_ENERGY_IMU_ID, &accel_ev, accel_cb);
+  AbiBindMsgBODY_TO_IMU_QUAT(V_CTL_ENERGY_IMU_ID, &body_to_imu_ev, body_to_imu_cb);
 }
 
 const float dt_attidude = 1.0 / ((float)CONTROL_FREQUENCY);
@@ -314,7 +341,7 @@ void v_ctl_climb_loop(void)
 
 #ifdef V_CTL_AUTO_GROUNDSPEED_SETPOINT
 // Ground speed control loop (input: groundspeed error, output: airspeed controlled)
-  float err_groundspeed = (v_ctl_auto_groundspeed_setpoint - (*stateGetHorizontalSpeedNorm_f()));
+  float err_groundspeed = (v_ctl_auto_groundspeed_setpoint - stateGetHorizontalSpeedNorm_f());
   v_ctl_auto_groundspeed_sum_err += err_groundspeed;
   BoundAbs(v_ctl_auto_groundspeed_sum_err, V_CTL_AUTO_GROUNDSPEED_MAX_SUM_ERR);
   v_ctl_auto_airspeed_controlled = (err_groundspeed + v_ctl_auto_groundspeed_sum_err * v_ctl_auto_groundspeed_igain) *
@@ -332,7 +359,7 @@ void v_ctl_climb_loop(void)
 #endif
 
   // Airspeed outerloop: positive means we need to accelerate
-  float speed_error = v_ctl_auto_airspeed_controlled - (*stateGetAirspeed_f());
+  float speed_error = v_ctl_auto_airspeed_controlled - stateGetAirspeed_f();
 
   // Speed Controller to PseudoControl: gain 1 -> 5m/s error = 0.5g acceleration
   v_ctl_desired_acceleration = speed_error * v_ctl_airspeed_pgain / 9.81f;
@@ -340,10 +367,13 @@ void v_ctl_climb_loop(void)
 
   // Actual Acceleration from IMU: attempt to reconstruct the actual kinematic acceleration
 #ifndef SITL
-  struct Int32Vect3 accel_meas_body;
-  struct Int32RMat *body_to_imu_rmat = orientationGetRMat_i(&imu.body_to_imu);
-  int32_rmat_transp_vmult(&accel_meas_body, body_to_imu_rmat, &imu.accel);
-  float vdot = ACCEL_FLOAT_OF_BFP(accel_meas_body.x) / 9.81f - sinf(stateGetNedToBodyEulers_f()->theta);
+  /* convert last imu accel measurement to float */
+  struct FloatVect3 accel_imu_f;
+  ACCELS_FLOAT_OF_BFP(accel_imu_f, accel_imu_meas);
+  /* rotate from imu to body frame */
+  struct FloatVect3 accel_meas_body;
+  float_quat_vmult(&accel_meas_body, &imu_to_body_quat, &accel_imu_f);
+  float vdot = accel_meas_body.x / 9.81f - sinf(stateGetNedToBodyEulers_f()->theta);
 #else
   float vdot = 0;
 #endif
@@ -361,7 +391,7 @@ void v_ctl_climb_loop(void)
   float en_dis_err = gamma_err - vdot_err;
 
   // Auto Cruise Throttle
-  if (launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
+  if (autopilot.launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
     v_ctl_auto_throttle_nominal_cruise_throttle +=
       v_ctl_auto_throttle_of_airspeed_igain * speed_error * dt_attidude
       + en_tot_err * v_ctl_energy_total_igain * dt_attidude;
@@ -374,7 +404,7 @@ void v_ctl_climb_loop(void)
                               + v_ctl_auto_throttle_of_airspeed_pgain * speed_error
                               + v_ctl_energy_total_pgain * en_tot_err;
 
-  if ((controlled_throttle >= 1.0f) || (controlled_throttle <= 0.0f) || (kill_throttle == 1)) {
+  if ((controlled_throttle >= 1.0f) || (controlled_throttle <= 0.0f) || (autopilot_throttle_killed() == 1)) {
     // If your energy supply is not sufficient, then neglect the climb requirement
     en_dis_err = -vdot_err;
 
@@ -385,7 +415,7 @@ void v_ctl_climb_loop(void)
 
 
   /* pitch pre-command */
-  if (launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
+  if (autopilot.launch && (v_ctl_mode >= V_CTL_MODE_AUTO_CLIMB)) {
     v_ctl_auto_throttle_nominal_cruise_pitch +=  v_ctl_auto_pitch_of_airspeed_igain * (-speed_error) * dt_attidude
         + v_ctl_energy_diff_igain * en_dis_err * dt_attidude;
     Bound(v_ctl_auto_throttle_nominal_cruise_pitch, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT);
@@ -396,7 +426,7 @@ void v_ctl_climb_loop(void)
     + v_ctl_auto_pitch_of_airspeed_dgain * vdot
     + v_ctl_energy_diff_pgain * en_dis_err
     + v_ctl_auto_throttle_nominal_cruise_pitch;
-  if (kill_throttle) { v_ctl_pitch_of_vz = v_ctl_pitch_of_vz - 1 / V_CTL_GLIDE_RATIO; }
+  if (autopilot_throttle_killed()) { v_ctl_pitch_of_vz = v_ctl_pitch_of_vz - 1 / V_CTL_GLIDE_RATIO; }
 
   v_ctl_pitch_setpoint = v_ctl_pitch_of_vz + nav_pitch;
   Bound(v_ctl_pitch_setpoint, H_CTL_PITCH_MIN_SETPOINT, H_CTL_PITCH_MAX_SETPOINT)

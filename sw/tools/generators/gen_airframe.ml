@@ -24,6 +24,7 @@
 
 let max_pprz = 9600. (* !!!! MAX_PPRZ From paparazzi.h !!!! *)
 
+
 open Printf
 open Xml2h
 
@@ -86,11 +87,17 @@ let convert_value_with_code_unit_coef_of_xml = function xml ->
   (* if unit equals code unit, don't convert as that would always result in a float *)
   if u = cu then failwith "Not converting";
   (* default value for code_unit is rad[/s] when unit is deg[/s] *)
-  let conv = try (Pprz.scale_of_units u cu) with
-    | Pprz.Unit_conversion_error s -> prerr_endline (sprintf "Unit conversion error: %s" s); flush stderr; exit 1
-    | Pprz.Unknown_conversion (su, scu) -> prerr_endline (sprintf "Warning: unknown unit conversion: from %s to %s" su scu); flush stderr; failwith "Unknown unit conversion"
-    | Pprz.No_automatic_conversion _ | _ -> failwith "Unit conversion error" in
-  let v = try ExtXml.float_attrib xml "value" with _ -> prerr_endline (sprintf "Error: Unit conversion of parameter %s impossible because '%s' is not a float" (Xml.attrib xml "name") (Xml.attrib xml "value")); flush stderr; exit 1 in
+  let conv = try PprzLink.scale_of_units u cu with
+  | PprzLink.Unit_conversion_error s ->
+      eprintf "Unit conversion error: %s\n%!" s;
+      exit 1
+  | PprzLink.Unknown_conversion (su, scu) ->
+      eprintf "Warning: unknown unit conversion: from %s to %s\n%!" su scu;
+      failwith "Unknown unit conversion"
+  | PprzLink.No_automatic_conversion _ | _ -> failwith "Unit conversion error" in
+  let v =
+    try ExtXml.float_attrib xml "value"
+    with _ -> prerr_endline (sprintf "Error: Unit conversion of parameter %s impossible because '%s' is not a float" (Xml.attrib xml "name") (Xml.attrib xml "value")); flush stderr; exit 1 in
   v *. conv
 
 let array_sep = Str.regexp "[,;]"
@@ -98,7 +105,7 @@ let rec string_from_type = fun name v t ->
   let sprint_array = fun v t ->
     let vs = Str.split array_sep v in
     let sl = List.map (fun vl -> string_from_type name vl t) vs in
-    "{ "^(String.concat " , " sl)^" }"
+    "{ "^(Compat.bytes_concat " , " sl)^" }"
   in
   let rm_leading_trailing_spaces = fun s ->
     let s = Str.global_replace (Str.regexp "^ *") "" s in
@@ -148,6 +155,26 @@ let parse_element = fun prefix s ->
     | _ -> xml_error "define|linear"
 
 
+let print_reverse_servo_table = fun driver servos ->
+  let d = match driver with "Default" -> "" | _ -> "_"^(String.uppercase driver) in
+  printf "static inline int get_servo_min%s(int _idx) {\n" d;
+  printf "  switch (_idx) {\n";
+  List.iter (fun c ->
+    let name = ExtXml.attrib c "name" in
+    printf "    case SERVO_%s: return SERVO_%s_MIN;\n" name name;
+  ) servos;
+  printf "    default: return 0;\n";
+  printf "  };\n";
+  printf "}\n\n";
+  printf "static inline int get_servo_max%s(int _idx) {\n" d;
+  printf "  switch (_idx) {\n";
+  List.iter (fun c ->
+    let name = ExtXml.attrib c "name" in
+    printf "    case SERVO_%s: return SERVO_%s_MAX;\n" name name;
+  ) servos;
+  printf "    default: return 0;\n";
+  printf "  };\n";
+  printf "}\n\n"
 
 let parse_servo = fun driver c ->
   let shortname = ExtXml.attrib c "name" in
@@ -216,7 +243,7 @@ let parse_command_laws = fun command ->
       let var = a "var"
       and value = a "value" in
       let v = preprocess_value value "values" "COMMAND" in
-      printf "  int16_t _var_%s = %s; \\\n" var v
+      printf "  int32_t _var_%s = %s; \\\n" var v
     | "call" ->
       let f = a "fun" in
       printf "  %s; \\\n\\\n" f
@@ -226,7 +253,7 @@ let parse_command_laws = fun command ->
       and rate_min = a "rate_min"
       and rate_max = a "rate_max" in
       let v = preprocess_value value "values" "COMMAND" in
-      printf "  static int16_t _var_%s = 0; _var_%s += Chop((%s) - (_var_%s), (%s), (%s)); \\\n" var var v var rate_min rate_max
+      printf "  static int32_t _var_%s = 0; _var_%s += Chop((%s) - (_var_%s), (%s), (%s)); \\\n" var var v var rate_min rate_max
     | "define" ->
       parse_element "" command
     | _ -> xml_error "set|let"
@@ -262,6 +289,17 @@ let parse_command = fun command no ->
   let failsafe_value = int_of_string (ExtXml.attrib command "failsafe_value") in
   { failsafe_value = failsafe_value; foo = 0}
 
+let parse_heli_curves = fun heli_surves ->
+  let a = fun s -> ExtXml.attrib heli_surves s in
+  match Xml.tag heli_surves with
+      "curve" ->
+        let throttle = a "throttle" in
+        let collective = a "collective" in
+        printf "  {.nb_points = %i, \\\n" (List.length (Str.split (Str.regexp ",") throttle));
+        printf "   .throttle = {%s}, \\\n" throttle;
+        printf "   .collective = {%s}}, \\\n" collective
+    | _ -> xml_error "mixer"
+
 let rec parse_section = fun ac_id s ->
   match Xml.tag s with
       "section" ->
@@ -274,10 +312,11 @@ let rec parse_section = fun ac_id s ->
       let servos = Xml.children s in
       let nb_servos = List.fold_right (fun s m -> Pervasives.max (int_of_string (ExtXml.attrib s "no")) m) servos min_int + 1 in
 
-      define (sprintf "SERVOS_%s_NB" (String.uppercase driver)) (string_of_int nb_servos);
-      printf "#include \"subsystems/actuators/actuators_%s.h\"\n" (String.lowercase driver);
+      define (sprintf "SERVOS_%s_NB" (Compat.bytes_uppercase driver)) (string_of_int nb_servos);
+      printf "#include \"subsystems/actuators/actuators_%s.h\"\n" (Compat.bytes_lowercase driver);
       nl ();
       List.iter (parse_servo driver) servos;
+      print_reverse_servo_table driver servos;
       nl ()
     | "commands" ->
       let commands = Array.of_list (Xml.children s) in
@@ -315,9 +354,19 @@ let rec parse_section = fun ac_id s ->
       List.iter parse_command_laws (Xml.children s);
       printf "  AllActuatorsCommit(); \\\n";
       printf "}\n\n";
+    | "heli_curves" ->
+      let default = ExtXml.attrib_or_default s "default" "0" in
+      let curves = Xml.children s in
+      let nb_points = List.fold_right (fun s m -> Pervasives.max (List.length (Str.split (Str.regexp ",") (ExtXml.attrib s "throttle"))) m) curves 0 in
+      define "THROTTLE_CURVE_MODE_INIT" default;
+      define "THROTTLE_CURVES_NB" (string_of_int (List.length curves));
+      define "THROTTLE_POINTS_NB" (string_of_int nb_points);
+      printf "#define THROTTLE_CURVES { \\\n";
+      List.iter parse_heli_curves curves;
+      printf "}\n\n";
     | "include" ->
       let filename = Str.global_replace (Str.regexp "\\$AC_ID") ac_id (ExtXml.attrib s "href") in
-      let subxml = Xml.parse_file filename in
+      let subxml = ExtXml.parse_file filename in
       printf "/* XML %s */" filename;
       nl ();
       List.iter (parse_section ac_id) (Xml.children subxml)
@@ -330,14 +379,14 @@ let rec parse_section = fun ac_id s ->
 let h_name = "AIRFRAME_H"
 
 let hex_to_bin = fun s ->
-  let n = String.length s in
+  let n = Compat.bytes_length s in
   assert(n mod 2 = 0);
-  let b = String.make (2*n) 'x' in
+  let b = Compat.bytes_make (2*n) 'x' in
   for i = 0 to n/2 - 1 do
-    b.[4*i] <- '\\';
-    Scanf.sscanf (String.sub s (2*i) 2) "%2x"
+    Compat.bytes_set b (4*i) '\\';
+    Scanf.sscanf (Compat.bytes_sub s (2*i) 2) "%2x"
       (fun x ->
-        String.blit (sprintf "%03o" x) 0 b (4*i+1) 3)
+        Compat.bytes_blit (sprintf "%03o" x) 0 b (4*i+1) 3)
   done;
   b
 

@@ -54,7 +54,7 @@
 
 static char ascii_to_osd_c(char c);
 static void osd_put_s(char *string,  uint8_t attributes, uint8_t char_nb, uint8_t row, uint8_t column);
-static bool_t _osd_sprintf(char *buffer, char *string, float value);
+static bool _osd_sprintf(char *buffer, char *string, float value);
 
 struct spi_transaction max7456_trans;
 
@@ -65,7 +65,7 @@ char osd_str_buf[OSD_STRING_SIZE];
 char osd_char = ' ';
 uint8_t step = 0;
 uint16_t osd_char_address = 0;
-uint8_t  osd_attr = FALSE;
+uint8_t  osd_attr = false;
 
 enum max7456_osd_status_codes {
   OSD_UNINIT,
@@ -87,10 +87,10 @@ enum osd_attributes {
 };
 
 uint8_t max7456_osd_status = OSD_UNINIT;
-uint8_t osd_enable = TRUE;
+uint8_t osd_enable = true;
 uint8_t osd_enable_val = OSD_IMAGE_ENABLE;
 uint8_t osd_stat_reg = 0;
-bool_t  osd_stat_reg_valid = FALSE;
+bool  osd_stat_reg_valid = false;
 
 void max7456_init(void)
 {
@@ -234,7 +234,7 @@ void max7456_event(void)
         break;
       case (OSD_READ_STATUS):
         osd_stat_reg = max7456_trans.input_buf[0];
-        osd_stat_reg_valid = TRUE;
+        osd_stat_reg_valid = true;
         max7456_osd_status = OSD_FINISHED;
         break;
       case (OSD_S_STEP1):
@@ -330,7 +330,7 @@ static void osd_put_s(char *string, uint8_t attributes, uint8_t char_nb, uint8_t
 
   // translate the string and put it to the "osd_string" '\0' = 0xff
   x = 0;
-  while (*(string + x) != '\0') {
+  while ( (*(string + x) != '\0') && ( x < (sizeof(osd_string)-1) )) {
     osd_string[x] = ascii_to_osd_c(*(string + x));
     x++;
   }
@@ -342,6 +342,10 @@ static void osd_put_s(char *string, uint8_t attributes, uint8_t char_nb, uint8_t
     }
   }
 
+  // Prevent overflow condition
+  if (char_nb >= OSD_STRING_SIZE) {
+    char_nb = OSD_STRING_SIZE-1;
+  }
   //Adjust for the reserved character number.
   for (; x < char_nb; x++) {
     osd_string[x] = 0;
@@ -362,7 +366,7 @@ static void osd_put_s(char *string, uint8_t attributes, uint8_t char_nb, uint8_t
 }
 
 // A VERY VERY STRIPED DOWN sprintf function suitable only for the paparazzi OSD.
-static bool_t _osd_sprintf(char *buffer, char *string, float value)
+static bool _osd_sprintf(char *buffer, char *string, float value)
 {
 
   uint8_t param_start = 0;
@@ -396,7 +400,9 @@ static bool_t _osd_sprintf(char *buffer, char *string, float value)
   if (frac_nb > 3) {
     frac_nb = 3;       // Bound value.
   }
-  y = (sizeof(to_asc) - 1); // Point y to the end of the array.
+  // Point y to one before the end of the array
+  // Because we will increment it with frac_nb-1, so pointing it to the end would result in overflow
+  y = (sizeof(to_asc) - 3);
   i_dec = abs((int16_t)value);
   // Fist we will deal with the fractional part if specified.
   if (frac_nb > 0 && frac_nb <= 3) {

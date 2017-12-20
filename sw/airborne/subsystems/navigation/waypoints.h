@@ -54,7 +54,7 @@ extern struct Waypoint waypoints[];
 
 extern void waypoints_init(void);
 
-extern bool_t waypoint_is_global(uint8_t wp_id);
+extern bool waypoint_is_global(uint8_t wp_id);
 extern void waypoint_set_global_flag(uint8_t wp_id);
 extern void waypoint_clear_global_flag(uint8_t wp_id);
 
@@ -103,6 +103,7 @@ extern void waypoint_set_latlon(uint8_t wp_id, struct LlaCoor_i *lla);
 
 /** copy one waypoint to another, this includes all flags from the source waypoint */
 extern void waypoint_copy(uint8_t wp_dest, uint8_t wp_src);
+extern void waypoint_position_copy(uint8_t wp_dest, uint8_t wp_src);
 
 
 /*

@@ -38,7 +38,7 @@
 #include "subsystems/radio_control.h"
 #endif
 #endif
-#if USE_UART0 || USE_UART1 || USE_UART2 || USE_UART3 || USE_UART4 || USE_UART5 || USE_UART6
+#if USE_UART0 || USE_UART1 || USE_UART2 || USE_UART3 || USE_UART4 || USE_UART5 || USE_UART6 || USE_UART7 || USE_UART8
 #define USING_UART 1
 #include "mcu_periph/uart.h"
 #endif
@@ -65,11 +65,23 @@
 
 void WEAK board_init(void)
 {
-  // default board init function does nothing...
+  /* default board init function does nothing... */
+}
+
+void WEAK board_init2(void)
+{
+  /* default board init function does nothing... */
 }
 
 void mcu_init(void)
 {
+  /* If we have a board specific init function, call it.
+   * Otherwise it will simply call the empty weak function.
+   *
+   * For example the ARDrone2 has this implemented to prevent stray data of IMU
+   * from OEM program still running and also accessing AC sensors
+   */
+  board_init();
 
   mcu_arch_init();
   /* If we have a board specific init function, call it.
@@ -77,13 +89,43 @@ void mcu_init(void)
    */
   board_init();
 
+  /* First enable the power of the MCU if needed */
+#if defined MCU_PWR
+  gpio_setup_output(MCU_PWR, MCU_PWR_PIN);
+  MCU_PWR_ON(MCU_PWR, MCU_PWR_PIN);
+
+#if defined BTN_ON
+  gpio_setup_input(BTN_ON, BTN_ON_PIN);
+  if(gpio_get(BTN_ON, BTN_ON_PIN))
+  {
+    MCU_PWR_ON(MCU_PWR, MCU_PWR_PIN);
+  }
+  else {
+    // Turn off and stop: wait until all power is off
+    while(true) {
+      MCU_PWR_OFF(MCU_PWR, MCU_PWR_PIN);
+    }
+  }
+#endif //BTN_ON
+
+#endif //MCU_PWR
+
 #ifdef PERIPHERALS_AUTO_INIT
   sys_time_init();
 #ifdef USE_LED
   led_init();
 #endif
+  /* First enable power of RC */
+#if defined RADIO_CONTROL_POWER_PORT
+  gpio_setup_output(RADIO_CONTROL_POWER_PORT, RADIO_CONTROL_POWER_PIN);
+  RADIO_CONTROL_POWER_ON(RADIO_CONTROL_POWER_PORT, RADIO_CONTROL_POWER_PIN);
+#endif
+#ifdef PERIPHERAL3V3_ENABLE_PORT
+  gpio_setup_output(PERIPHERAL3V3_ENABLE_PORT, PERIPHERAL3V3_ENABLE_PIN);
+  PERIPHERAL3V3_ENABLE_ON(PERIPHERAL3V3_ENABLE_PORT, PERIPHERAL3V3_ENABLE_PIN);
+#endif
   /* for now this means using spektrum */
-#if defined RADIO_CONTROL & defined RADIO_CONTROL_SPEKTRUM_PRIMARY_PORT & defined RADIO_CONTROL_BIND_IMPL_FUNC
+#if defined RADIO_CONTROL & defined RADIO_CONTROL_SPEKTRUM_PRIMARY_PORT & defined RADIO_CONTROL_BIND_IMPL_FUNC & defined SPEKTRUM_BIND_PIN_PORT
   RADIO_CONTROL_BIND_IMPL_FUNC();
 #endif
 #if USE_UART0
@@ -106,6 +148,12 @@ void mcu_init(void)
 #endif
 #if USE_UART6
   uart6_init();
+#endif
+#if USE_UART7
+  uart7_init();
+#endif
+#if USE_UART8
+  uart8_init();
 #endif
 #if USING_UART
   uart_arch_init();
@@ -179,6 +227,7 @@ void mcu_init(void)
   INFO("PERIPHERALS_AUTO_INIT not enabled! Peripherals (including sys_time) need explicit initialization.")
 #endif /* PERIPHERALS_AUTO_INIT */
 
+  board_init2();
 }
 
 

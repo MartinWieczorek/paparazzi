@@ -48,7 +48,8 @@ enum MissionInsertMode {
   Append,         ///< add at the last position
   Prepend,        ///< add before the current element
   ReplaceCurrent, ///< replace current element
-  ReplaceAll      ///< remove all elements and add the new one
+  ReplaceAll,     ///< remove all elements and add the new one
+  ReplaceNexts    ///< replace the next element and remove all the others
 };
 
 struct _mission_wp {
@@ -100,6 +101,7 @@ struct _mission_element {
   } element;
 
   float duration; ///< time to spend in the element (<= 0 to disable)
+  uint8_t index;      ///< index of mission element
 };
 
 /** Max number of elements in the tasks' list
@@ -127,13 +129,13 @@ extern void mission_init(void);
  * @param element mission element structure
  * @return return TRUE if insertion is succesful, FALSE otherwise
  */
-extern bool_t mission_insert(enum MissionInsertMode insert, struct _mission_element *element);
+extern bool mission_insert(enum MissionInsertMode insert, struct _mission_element *element);
 
 /** Convert mission element's points format if needed
  * @param el pointer to the mission element
  * @return return TRUE if conversion is succesful, FALSE otherwise
  */
-extern bool_t mission_element_convert(struct _mission_element *el);
+extern bool mission_element_convert(struct _mission_element *el);
 
 /** Get current mission element
  * @return return a pointer to the next mission element or NULL if no more elements
@@ -146,7 +148,7 @@ extern struct _mission_element *mission_get(void);
  * @param lla pointer to the input LLA coordinates (int)
  * @return TRUE if conversion is succesful, FALSE otherwise
  */
-extern bool_t mission_point_of_lla(struct EnuCoor_f *point, struct LlaCoor_i *lla);
+extern bool mission_point_of_lla(struct EnuCoor_f *point, struct LlaCoor_i *lla);
 
 /** Run mission
  *

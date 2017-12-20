@@ -44,12 +44,14 @@ extern float ctrl_module_demo_y_d_gain;
 #define GUIDANCE_V_MODE_MODULE_SETTING GUIDANCE_V_MODE_MODULE
 
 // Implement own Horizontal loops
+extern void guidance_h_module_init(void);
 extern void guidance_h_module_enter(void);
 extern void guidance_h_module_read_rc(void);
-extern void guidance_h_module_run(bool_t in_flight);
+extern void guidance_h_module_run(bool in_flight);
 
 // Implement own Vertical loops
+extern void guidance_v_module_init(void);
 extern void guidance_v_module_enter(void);
-extern void guidance_v_module_run(bool_t in_flight);
+extern void guidance_v_module_run(bool in_flight);
 
 #endif /* CTRL_MODULE_DEMO_H_ */

@@ -18,16 +18,16 @@ static void last_plume_was_here(void)
   last_plume.y = stateGetPositionEnu_f()->y;
 }
 
-bool_t nav_anemotaxis_downwind(uint8_t c, float radius)
+bool nav_anemotaxis_downwind(uint8_t c, float radius)
 {
   struct FloatVect2 *wind = stateGetHorizontalWindspeed_f();
   float wind_dir = atan2(wind->x, wind->y);
   waypoints[c].x = waypoints[WP_HOME].x + radius * cos(wind_dir);
   waypoints[c].y = waypoints[WP_HOME].y + radius * sin(wind_dir);
-  return FALSE;
+  return false;
 }
 
-bool_t nav_anemotaxis_init(uint8_t c)
+bool nav_anemotaxis_init(uint8_t c)
 {
   status = UTURN;
   sign = 1;
@@ -36,16 +36,16 @@ bool_t nav_anemotaxis_init(uint8_t c)
   waypoints[c].x = stateGetPositionEnu_f()->x + DEFAULT_CIRCLE_RADIUS * cos(wind_dir + M_PI);
   waypoints[c].y = stateGetPositionEnu_f()->y + DEFAULT_CIRCLE_RADIUS * sin(wind_dir + M_PI);
   last_plume_was_here();
-  return FALSE;
+  return false;
 }
 
-bool_t nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
+bool nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
 {
   if (chemo_sensor) {
     last_plume_was_here();
     waypoints[plume].x = stateGetPositionEnu_f()->x;
     waypoints[plume].y = stateGetPositionEnu_f()->y;
-    //    DownlinkSendWp(plume);
+    //    DownlinkSendWpNr(plume);
   }
 
   struct FloatVect2 *wind = stateGetHorizontalWindspeed_f();
@@ -70,8 +70,8 @@ bool_t nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
         waypoints[c2].x = waypoints[c1].x - width * crosswind_x * sign;
         waypoints[c2].y = waypoints[c1].y - width * crosswind_y * sign;
 
-        //      DownlinkSendWp(c1);
-        //      DownlinkSendWp(c2);
+        //      DownlinkSendWpNr(c1);
+        //      DownlinkSendWpNr(c2);
 
         status = CROSSWIND;
         nav_init_stage();
@@ -84,7 +84,7 @@ bool_t nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
         waypoints[c].x = waypoints[c2].x + DEFAULT_CIRCLE_RADIUS * upwind_x;
         waypoints[c].y = waypoints[c2].y + DEFAULT_CIRCLE_RADIUS * upwind_y;
 
-        // DownlinkSendWp(c);
+        // DownlinkSendWpNr(c);
 
         sign = -sign;
         status = UTURN;
@@ -95,7 +95,7 @@ bool_t nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
         waypoints[c].x = stateGetPositionEnu_f()->x + DEFAULT_CIRCLE_RADIUS * upwind_x;
         waypoints[c].y = stateGetPositionEnu_f()->y + DEFAULT_CIRCLE_RADIUS * upwind_y;
 
-        // DownlinkSendWp(c);
+        // DownlinkSendWpNr(c);
 
         sign = -sign;
         status = UTURN;
@@ -104,5 +104,5 @@ bool_t nav_anemotaxis(uint8_t c, uint8_t c1, uint8_t c2, uint8_t plume)
       break;
   }
   chemo_sensor = 0;
-  return TRUE;
+  return true;
 }

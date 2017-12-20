@@ -50,26 +50,19 @@ PRINT_CONFIG_MSG("Gyro/Accel output rate is 100Hz at 1kHz internal sampling")
 #define IMU_MPU_SMPLRT_DIV 3
 PRINT_CONFIG_MSG("Gyro/Accel output rate is 2kHz at 8kHz internal sampling")
 #else
-#error Non-default PERIODIC_FREQUENCY: please define MPU_HMC_LOWPASS_FILTER and MPU_HMC_SMPLRT_DIV.
+#error Non-default PERIODIC_FREQUENCY: please define IMU_MPU_LOWPASS_FILTER and IMU_MPU_SMPLRT_DIV.
 #endif
 #endif
 PRINT_CONFIG_VAR(IMU_MPU_LOWPASS_FILTER)
 PRINT_CONFIG_VAR(IMU_MPU_SMPLRT_DIV)
 
-#ifndef IMU_MPU_GYRO_RANGE
-#define IMU_MPU_GYRO_RANGE MPU60X0_GYRO_RANGE_2000
-#endif
 PRINT_CONFIG_VAR(IMU_MPU_GYRO_RANGE)
-
-#ifndef IMU_MPU_ACCEL_RANGE
-#define IMU_MPU_ACCEL_RANGE MPU60X0_ACCEL_RANGE_16G
-#endif
 PRINT_CONFIG_VAR(IMU_MPU_ACCEL_RANGE)
 
 
 struct ImuMpu6000 imu_mpu_spi;
 
-void imu_impl_init(void)
+void imu_mpu_spi_init(void)
 {
   mpu60x0_spi_init(&imu_mpu_spi.mpu, &IMU_MPU_SPI_DEV, IMU_MPU_SPI_SLAVE_IDX);
   // change the default configuration
@@ -80,7 +73,7 @@ void imu_impl_init(void)
 }
 
 
-void imu_periodic(void)
+void imu_mpu_spi_periodic(void)
 {
   mpu60x0_spi_periodic(&imu_mpu_spi.mpu);
 }
@@ -92,7 +85,7 @@ void imu_mpu_spi_event(void)
     uint32_t now_ts = get_sys_time_usec();
     RATES_COPY(imu.gyro_unscaled, imu_mpu_spi.mpu.data_rates.rates);
     VECT3_COPY(imu.accel_unscaled, imu_mpu_spi.mpu.data_accel.vect);
-    imu_mpu_spi.mpu.data_available = FALSE;
+    imu_mpu_spi.mpu.data_available = false;
     imu_scale_gyro(&imu);
     imu_scale_accel(&imu);
     AbiSendMsgIMU_GYRO_INT32(IMU_MPU6000_ID, now_ts, &imu.gyro);

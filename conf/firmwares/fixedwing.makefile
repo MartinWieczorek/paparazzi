@@ -20,21 +20,18 @@ SRC_MODULES=modules
 
 FIXEDWING_INC = -I$(SRC_FIRMWARE) -I$(SRC_FIXEDWING) -I$(SRC_BOARD)
 
-
+VPATH += $(PAPARAZZI_HOME)/var/share
 
 # Standard Fixed Wing Code
 include $(CFG_FIXEDWING)/autopilot.makefile
 
 # automatically include correct actuators for the ap target
-ifeq ($(BOARD),classix)
-  ACTUATOR_TARGET = fbw
-else
-  ACTUATOR_TARGET = ap
-endif
+ACTUATOR_TARGET = ap
+ACTUATORS ?= none
 
 ifeq ($(TARGET),$(ACTUATOR_TARGET))
 
-  ifneq ($(ACTUATORS),)
+  ifneq ($(ACTUATORS),none)
     include $(CFG_SHARED)/$(ACTUATORS).makefile
   endif
 

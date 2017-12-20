@@ -1,3 +1,618 @@
+Paparazzi v5.12_stable
+======================
+
+Stable version release
+
+
+Paparazzi v5.11_devel
+=====================
+
+Update changelog
+
+General
+-------
+- updated to pprzlink v.2.0.
+  [#2083] (https://github.com/paparazzi/paparazzi/pull/2083)
+- HITL as a standalone target
+  [#2062] (https://github.com/paparazzi/paparazzi/pull/2062)
+- Added Gazebo as simulation backend for NPS
+  [#2069] (https://github.com/paparazzi/paparazzi/pull/2069)
+- conversion of subsystems to modules
+  [#1978] (https://github.com/paparazzi/paparazzi/pull/1978)
+  [#1985] (https://github.com/paparazzi/paparazzi/pull/1985)
+  [#1989] (https://github.com/paparazzi/paparazzi/pull/1989)
+- live MAG calibration tool and onboard calibration algorithm
+  [#2043] (https://github.com/paparazzi/paparazzi/pull/2043)
+  [#1977] (https://github.com/paparazzi/paparazzi/pull/1977)
+- possibility to use generated autopilot for rotorcraft
+  [#2055] (https://github.com/paparazzi/paparazzi/pull/2055)
+  [#1975] (http://github.com/paparazzi/paparazzi/pull/1975)
+- also compile C++ files
+  [#1561] (http://github.com/paparazzi/paparazzi/pull/1561)
+- mag live calibration tool
+  [#1977] (http://github.com/paparazzi/paparazzi/pull/1977)
+- flight plans
+  [#2106] (http://github.com/paparazzi/paparazzi/pull/2106)
+  [#2101] (http://github.com/paparazzi/paparazzi/pull/2101)
+  [#1970] (http://github.com/paparazzi/paparazzi/pull/1970)
+  [#1967] (http://github.com/paparazzi/paparazzi/pull/1967)
+  [#1943] (http://github.com/paparazzi/paparazzi/pull/1943)
+  [#1942] (http://github.com/paparazzi/paparazzi/pull/1942)
+  [#1900] (http://github.com/paparazzi/paparazzi/pull/1900)
+- mission index
+  [#1918] (http://github.com/paparazzi/paparazzi/pull/1918)
+- several conf cleaning
+- NPS update
+  [#1831] (http://github.com/paparazzi/paparazzi/pull/1931)
+- mini package manager
+  [#1904] (http://github.com/paparazzi/paparazzi/pull/1904)
+
+Airborne
+--------
+- cleaning TUDelft stereocam modules
+  [#2107] (https://github.com/paparazzi/paparazzi/pull/2107)
+- support of lisa mxs board
+  [#2104] (https://github.com/paparazzi/paparazzi/pull/2104)
+- initial support for Parrot Swing
+  [#2085] (https://github.com/paparazzi/paparazzi/pull/2085)
+- initial support for Decawave DW1000 modules
+  [#2084] (https://github.com/paparazzi/paparazzi/pull/2084)
+- polygon survey via Guidance Vector Field
+  [#2052] (https://github.com/paparazzi/paparazzi/pull/2052)
+- added support of RTK with UBlox8 modules
+  [#2034] (https://github.com/paparazzi/paparazzi/pull/2034)
+- added support of HOTT radio control
+  [#2030] (https://github.com/paparazzi/paparazzi/pull/2030)
+- added support for Chimera autopilot
+  [#2018] (https://github.com/paparazzi/paparazzi/pull/2018)
+- refactoring autopilot code
+  [#2009] (https://github.com/paparazzi/paparazzi/pull/2009)
+- several improvments to Hybrid control and INDI
+  [#2063] (https://github.com/paparazzi/paparazzi/pull/2063)
+  [#2011] (https://github.com/paparazzi/paparazzi/pull/2011)
+  [#2005] (https://github.com/paparazzi/paparazzi/pull/2005)
+  [#2004] (https://github.com/paparazzi/paparazzi/pull/2004)
+  [#2003] (https://github.com/paparazzi/paparazzi/pull/2003)
+  [#2002] (https://github.com/paparazzi/paparazzi/pull/2002)
+- added support for ChibiOS on rotorcraft
+  [#1999] (https://github.com/paparazzi/paparazzi/pull/1999)
+- added support for Parrod Disco
+  [#2066] (https://github.com/paparazzi/paparazzi/pull/2066)
+  [#1992] (https://github.com/paparazzi/paparazzi/pull/1992)
+- convert telemetry subsystems to modules
+  [#1835] (http://github.com/paparazzi/paparazzi/pull/1835)
+- change behavior of command laws
+  [#1955] (http://github.com/paparazzi/paparazzi/pull/1955)
+- RC switch
+  [#1954] (http://github.com/paparazzi/paparazzi/pull/1954)
+  [#1953] (http://github.com/paparazzi/paparazzi/pull/1953)
+  [#1951] (http://github.com/paparazzi/paparazzi/pull/1951)
+- PX4 support and fixes
+  [#1950] (http://github.com/paparazzi/paparazzi/pull/1950)
+  [#1962] (http://github.com/paparazzi/paparazzi/pull/1962)
+- update libopencm3
+  [#1965] (http://github.com/paparazzi/paparazzi/pull/1965)
+- sbus actuators support
+  [#1952] (http://github.com/paparazzi/paparazzi/pull/1952)
+- guidance vector field
+  [#1919] (http://github.com/paparazzi/paparazzi/pull/1919)
+- ahrs support and fixes
+  [#1949] (http://github.com/paparazzi/paparazzi/pull/1949)
+  [#1946] (http://github.com/paparazzi/paparazzi/pull/1946)
+- lidar lite and teraranger drivers
+  [#1926] (http://github.com/paparazzi/paparazzi/pull/1926)
+  [#1888] (http://github.com/paparazzi/paparazzi/pull/1888)
+- variable size median filter
+  [#1909] (http://github.com/paparazzi/paparazzi/pull/1909)
+
+
+Paparazzi v5.10_stable
+======================
+
+Stable version release
+
+- convert ahrs to modules
+  [#1859] (http://github.com/paparazzi/paparazzi/pull/1859)
+- svinfo vizu
+  [#1860] (http://github.com/paparazzi/paparazzi/pull/1860)
+- fix i2c, uart and systime drivers for chibios
+- several small fix on configuration files
+- fix in state and geodetic interface
+- fix for secondary GPS timeout
+- fix airframe generation to have all configuration variables first
+
+
+Paparazzi v5.9.0_testing
+========================
+
+First release candidate for v5.10
+
+General
+-------
+- using Coverity scan tool for static code analysis https://scan.coverity.com/projects/paparazzi-paparazzi
+- optitrack fixes and gps_datalink protocol updates
+  [#1506] (https://github.com/paparazzi/paparazzi/pull/1506)
+  [#1563] (https://github.com/paparazzi/paparazzi/pull/1563)
+- optitrack/natnet logging
+  [#1538] (https://github.com/paparazzi/paparazzi/pull/1538)
+- factor out message library and tools into https://github.com/paparazzi/pprzlink
+  [#1503] (https://github.com/paparazzi/paparazzi/pull/1513)
+- pprzlink: support reading unaligned fiels from messages
+  [#1528] (https://github.com/paparazzi/paparazzi/pull/1528)
+- pprzlink: update to C API with file descriptor param
+  [#1593] (https://github.com/paparazzi/paparazzi/pull/1593)
+- flight plans: allow variable declarations in flight plans
+  [#1530] (https://github.com/paparazzi/paparazzi/pull/1530)
+- flight plans: load modules directly from a flight plan
+  [#1540] (https://github.com/paparazzi/paparazzi/pull/1540)
+- flight plans: add call_once alias for run without looping
+  [#1675] (https://github.com/paparazzi/paparazzi/pull/1675)
+- flight plans: simpler geofence safety behaviour definition
+  [#1664] (https://github.com/paparazzi/paparazzi/pull/1644)
+  [#1802] (https://github.com/paparazzi/paparazzi/pull/1802)
+- module build system: improvements to efficiently replace subsystems
+  [#1534] (https://github.com/paparazzi/paparazzi/pull/1534)
+  [#1590] (https://github.com/paparazzi/paparazzi/pull/1590)
+  [#1643] (https://github.com/paparazzi/paparazzi/issues/1643)
+  [#1728] (https://github.com/paparazzi/paparazzi/pull/1728)
+  [#1760] (https://github.com/paparazzi/paparazzi/pull/1760)
+- paparazzi center: make console non-editable and CTRL-C usable to copy text
+  [#1546] (https://github.com/paparazzi/paparazzi/pull/1546)
+  [#1547] (https://github.com/paparazzi/paparazzi/pull/1547)
+- paparazzi center: better save dialog on quit to replace backup dialog at start
+  [#1591] (https://github.com/paparazzi/paparazzi/pull/1591)
+  [#1640] (https://github.com/paparazzi/paparazzi/pull/1640)
+- GCS: add Bebop-like rotorcraft icon
+  [#1552] (https://github.com/paparazzi/paparazzi/pull/1552)
+- GCS: changed default layout and make it easier to configure
+  [#1600] (https://github.com/paparazzi/paparazzi/pull/1600)
+  [#1601] (https://github.com/paparazzi/paparazzi/pull/1601)
+- update to latest libopencm3
+  [#1557] (https://github.com/paparazzi/paparazzi/pull/1557)
+- build: print more verbose info on xml loading errors
+  [#1570] (https://github.com/paparazzi/paparazzi/pull/1570)
+- build: add board specific flags: e.g. use link-time-optimization on smaller boards
+  [#1645] (https://github.com/paparazzi/paparazzi/pull/1645)
+- OCaml: deal with string deprecated warnings for OCaml >= 4.02
+  [#1703] (https://github.com/paparazzi/paparazzi/issues/1703)
+- tools: video stream viewer with ROI selection
+  [#1708] (https://github.com/paparazzi/paparazzi/pull/1708)
+- add a vertical component to the wind vector
+  [#1713] (https://github.com/paparazzi/paparazzi/pull/1713)
+- math: fix overflow in int32_quat_vmult
+  [#1722] (https://github.com/paparazzi/paparazzi/pull/1722)
+- math: int32 generic vector math
+  [#1758] (https://github.com/paparazzi/paparazzi/pull/1758)
+- cockpit: workaround lablgtk 2.18 Debian/Ubuntu bug
+  [#1647] (https://github.com/paparazzi/paparazzi/pull/1647)
+- GCS: plot shapes on the map
+  [#1809] (https://github.com/paparazzi/paparazzi/pull/1809)
+- paparazzicenter: experimental Python version
+  [#1811] (https://github.com/paparazzi/paparazzi/pull/1811)
+- try to prevent speech spam in GCS
+  [#1842] (https://github.com/paparazzi/paparazzi/pull/1842)
+
+Airborne
+--------
+
+- gps: cleanup utm support and remove GPS_USE_LATLONG flag
+  [#1476] (https://github.com/paparazzi/paparazzi/pull/1476)
+- gps: support multiple GPS at once with automatic switching
+  [#1532] (https://github.com/paparazzi/paparazzi/pull/1532)
+- gps: fix GPS mediatek diy compilation
+  [#1525] (https://github.com/paparazzi/paparazzi/pull/1525/files)
+- gps: revive UBlox via I2C support via gps_ubx_i2c module
+  [#1580] (https://github.com/paparazzi/paparazzi/pull/1580)
+- sdlog: add SD logging for some meteo sensors on compatible boards
+  [#1498] (https://github.com/paparazzi/paparazzi/pull/1498)
+  [#1512] (https://github.com/paparazzi/paparazzi/pull/1512)
+- datalink: update bluegiga protocol
+  [#1507] (https://github.com/paparazzi/paparazzi/pull/1507)
+- module: computer vision: orange avoider example
+  [#1539] (https://github.com/paparazzi/paparazzi/pull/1539)
+- module: refactor XSens drivers and conver them to modules
+  [#1541] (https://github.com/paparazzi/paparazzi/pull/1541)
+- module: improve optic flow calculation in LukasKanade and add edgeflow
+  [#1558] (https://github.com/paparazzi/paparazzi/pull/1558)
+  [#1586] (https://github.com/paparazzi/paparazzi/pull/1586)
+- replace bool_t with C99 bool from stdbool.h
+  [#1577] (https://github.com/paparazzi/paparazzi/pull/1577)
+- module: add px4_gimbal for gimal control on Pixhawk
+  [#1592] (https://github.com/paparazzi/paparazzi/pull/1592)
+- module: add esc32 for ESC32v3 speed controller
+  [#1636] (https://github.com/paparazzi/paparazzi/pull/1636)
+- module: Support uADC probe from Aeroprobe
+  [#1639] (https://github.com/paparazzi/paparazzi/pull/1639)
+- module: nav routine for pneumatic launcher takeoff
+  [#1655] (https://github.com/paparazzi/paparazzi/pull/1655)
+- module: nav routine for skid landing
+  [#1669] (https://github.com/paparazzi/paparazzi/pull/1669)
+- module: rpm_sensor
+  [#1666] (https://github.com/paparazzi/paparazzi/pull/1666)
+- module: pose_history
+  [#1737] (https://github.com/paparazzi/paparazzi/pull/1737)
+- improved vision pipeline with dual video support and async threads
+  [#1648] (https://github.com/paparazzi/paparazzi/pull/1648)
+  [#1735] (https://github.com/paparazzi/paparazzi/pull/1735)
+  [#1764] (https://github.com/paparazzi/paparazzi/pull/1764)
+  [#1806] (https://github.com/paparazzi/paparazzi/pull/1806)
+- computer vision: optical flow landing module
+  [#1611] (https://github.com/paparazzi/paparazzi/pull/1611)
+- computer vision: openCV examples
+  [#1663] (https://github.com/paparazzi/paparazzi/pull/1663)
+  [#1789] (https://github.com/paparazzi/paparazzi/pull/1789)
+  [#1798] (https://github.com/paparazzi/paparazzi/pull/1798)
+  [#1824] (https://github.com/paparazzi/paparazzi/pull/1824)
+- computer vision: image appearance representation using texton distribution
+  [#1692] (https://github.com/paparazzi/paparazzi/pull/1692)
+- UTM handling upgrades
+  [#1629] (https://github.com/paparazzi/paparazzi/pull/1629)
+  [#1637] (https://github.com/paparazzi/paparazzi/pull/1637)
+  [#1730] (https://github.com/paparazzi/paparazzi/pull/1730)
+- datalink: add bluegiga capability to decode direct air-2-air messages
+  [#1633] (https://github.com/paparazzi/paparazzi/pull/1633)
+- filters: delayed first order filter, second order notch filter
+  [#1736] (https://github.com/paparazzi/paparazzi/pull/1736)
+  [#1733] (https://github.com/paparazzi/paparazzi/pull/1733)
+- convert subsystems to modules
+  [#1625] (https://github.com/paparazzi/paparazzi/pull/1625)
+  [#1638] (https://github.com/paparazzi/paparazzi/pull/1638)
+  [#1740] (https://github.com/paparazzi/paparazzi/pull/1740)
+  [#1788] (https://github.com/paparazzi/paparazzi/pull/1788)
+- telemetry over intermcu
+  [#1821] (https://github.com/paparazzi/paparazzi/pull/1821)
+- unified sys_mon and rtos_mon modules
+  [#1846] (https://github.com/paparazzi/paparazzi/pull/1846)
+
+Rotorcraft firmware
+-------------------
+
+- add velocity commands for guided mode
+  [#1502] (https://github.com/paparazzi/paparazzi/pull/1502)
+- add traffic info support
+  [#1509] (https://github.com/paparazzi/paparazzi/pull/1509)
+- refactor INDI stabilization and INDI rate control
+  [#1519] (https://github.com/paparazzi/paparazzi/pull/1519)
+- add oval navigation routine (like in fixedwing)
+  [#1568] (https://github.com/paparazzi/paparazzi/pull/1568)
+- improve helicopter support: spinup routines and flight plan mode manual
+  [#1606] (https://github.com/paparazzi/paparazzi/pull/1606)
+- helicopter: INDI controller
+  [#1752] (https://github.com/paparazzi/paparazzi/pull/1752)
+- converted PI rate controller to float
+  [#1624] (https://github.com/paparazzi/paparazzi/pull/1624)
+- better defaults for vertical climb mode to avoid surprises
+  [#1627] (https://github.com/paparazzi/paparazzi/issues/1627)
+- extension of the guided protocol
+  [#1694] (https://github.com/paparazzi/paparazzi/pull/1694)
+- guidance for hybrid drones
+  [#1769] (https://github.com/paparazzi/paparazzi/pull/1769)
+
+Fixed-wing firmware
+-------------------
+
+- split AP and FBW taks when using ChibiOS
+  [#1767] (https://github.com/paparazzi/paparazzi/pull/1767)
+- Hard-fault recovery wen using ChibiOS
+  [#1815] (https://github.com/paparazzi/paparazzi/pull/1815)
+
+
+Drivers/HW support
+------------------
+
+- peripherals: MPUxxxx: configure multiple I2C slaves
+  [#1499] (https://github.com/paparazzi/paparazzi/pull/1499)
+- peripherals: MPU60x0: fix startup bug
+  [#1602] (https://github.com/paparazzi/paparazzi/pull/1602)
+- peripherals: support for AK8975 mag in MPU9150
+  [#1508] (https://github.com/paparazzi/paparazzi/pull/1508)
+- support for Pixhawk board (with split ap/fbw processors)
+  [#1551] (https://github.com/paparazzi/paparazzi/pull/1551)
+  [#1566] (https://github.com/paparazzi/paparazzi/pull/1566)
+  [#1569] (https://github.com/paparazzi/paparazzi/pull/1569)
+  [#1587] (https://github.com/paparazzi/paparazzi/pull/1587)
+- Parrot Bebop: increase luminosity of front camera
+  [#1562] (https://github.com/paparazzi/paparazzi/pull/1562)
+- Parrot Bebop: fix for firmware 3.2.0
+  [#1745] (https://github.com/paparazzi/paparazzi/pull/1745)
+  [#1828] (https://github.com/paparazzi/paparazzi/pull/1828)
+- Parrot Bebop: camera upgrade
+  [#1750] (https://github.com/paparazzi/paparazzi/pull/1750)
+  [#1766] (https://github.com/paparazzi/paparazzi/pull/1766)
+  [#1818] (https://github.com/paparazzi/paparazzi/pull/1818)
+  [#1825] (https://github.com/paparazzi/paparazzi/pull/1825)
+  [#1826] (https://github.com/paparazzi/paparazzi/pull/1826)
+  [#1834] (https://github.com/paparazzi/paparazzi/pull/1834)
+- Parrot ARDrone2/Bebop: startup fixes
+  [#1571] (https://github.com/paparazzi/paparazzi/pull/1571)
+  [#1588] (https://github.com/paparazzi/paparazzi/pull/1588)
+- support for new OPA (Oversized Paparazzi Autopilot)
+  [#1615] (https://github.com/paparazzi/paparazzi/pull/1615)
+  [#1657] (https://github.com/paparazzi/paparazzi/pull/1657)
+- drop support for classix
+  [#1626] (https://github.com/paparazzi/paparazzi/pull/1626)
+- CAN support for STM32F4
+  [#1670] (https://github.com/paparazzi/paparazzi/pull/1670)
+- support for OpenPilot Revolution board (without modem)
+  [#1676] (https://github.com/paparazzi/paparazzi/pull/1676)
+- support for pure ChibiOS architecture
+  [#1699] (https://github.com/paparazzi/paparazzi/pull/1699)
+  [#1743] (https://github.com/paparazzi/paparazzi/pull/1743)
+  [#1767] (https://github.com/paparazzi/paparazzi/pull/1767)
+
+Simulator
+---------
+
+- NPS: simulate airspeed and temperature sensors and get pressure from FDM
+  [#1554] (https://github.com/paparazzi/paparazzi/pull/1554)
+- NPS: set wind via FlightGear
+  [#1565] (https://github.com/paparazzi/paparazzi/pull/1565)
+- gaia: fix environment simulator time scale selector
+  [#1653] (https://github.com/paparazzi/paparazzi/issues/1653)
+
+
+Paparazzi v5.8.2_stable
+=======================
+
+Maintenance release.
+
+- ground_segment: fix ant_track compilation
+- docker: use Ubuntu 16.04 and various fixes
+- energy ctrl: fix accel conversion for correct vdot
+- system: update udev rules to detect Lisa/M v2.1 correctly
+- cockpit: workaround lablgtk 2.18 Debian/Ubuntu bug
+- modules: fix gps_ublox for fixedwings
+
+
+Paparazzi v5.8.1_stable
+=======================
+
+Maintenance release.
+
+- ground segment: python tools fixes
+- module: stereocam2state improvements/fixes
+  [#1490] (https://github.com/paparazzi/paparazzi/pull/1490)
+- module: fix gps_ublox
+- boards: naze32: default to SERIAL (USB) flash mode
+- generators: always put configure options at beginning
+  [#1517] (https://github.com/paparazzi/paparazzi/pull/1517)
+- generators: varous fixes for loading of modules and subsystems
+- drivers: fix regression of wrong magnetometer axis on Parrot Bebop
+
+
+Paparazzi v5.8.0_stable
+=======================
+
+Stable version release.
+
+- module: nav_catapult: avoid conditional directives
+  [#1454] (https://github.com/paparazzi/paparazzi/pull/1454)
+- module: gps_ubx_ucenter fix autobaud and autoconf for ublox-8
+  [#1480] (https://github.com/paparazzi/paparazzi/pull/1480)
+- module: add stereocam2state which publishes a VELOCITY_ESTIMATE from stereocam
+  [#1486] (https://github.com/paparazzi/paparazzi/pull/1486)
+- arch/linux: I2C: use repeated-start for transceive as required by some sensors
+  [#1469] (https://github.com/paparazzi/paparazzi/pull/1469)
+- remove unused libeknav and fms folder
+  [#1487] (https://github.com/paparazzi/paparazzi/pull/1487)
+
+Paparazzi 5.7.1_testing
+=======================
+
+Second release candidate for v5.8 stable release.
+
+- SPI slave implemented and tested for STM32F4
+  [#1456] (https://github.com/paparazzi/paparazzi/pull/1456)
+- Added support for Elle0 V1.2
+  [#1465] (https://github.com/paparazzi/paparazzi/pull/1465)
+- Bebop: fix motor directions
+  [#1466] (https://github.com/paparazzi/paparazzi/pull/1466)
+  [#1468] (https://github.com/paparazzi/paparazzi/pull/1468)
+  [#1474] (https://github.com/paparazzi/paparazzi/pull/1474)
+- stereo camera modules: obstacle avoidance and follow me
+  [#1462] (https://github.com/paparazzi/paparazzi/pull/1462)
+  [#1472] (https://github.com/paparazzi/paparazzi/pull/1472)
+  [#1473] (https://github.com/paparazzi/paparazzi/pull/1473)
+- fix video_rtp_stream and bebop_front_camera if not using UDP for telemetry
+- modules xml requires doc and description now
+- Modules can be used like subsystems in airframe files
+  [#1471] (https://github.com/paparazzi/paparazzi/pull/1471)
+- rotorcraft rate controller setpoints in deg/s
+  [#1479] (https://github.com/paparazzi/paparazzi/pull/1479)
+- Guided mode for rotorcrafts
+  [#1457] (https://github.com/paparazzi/paparazzi/pull/1457)
+- naze32: PPM input on PA0 by default
+  [#1481] (https://github.com/paparazzi/paparazzi/pull/1481)
+
+Paparazzi 5.7.0_testing
+=======================
+
+First release candidate for v5.8 stable release.
+
+General
+-------
+
+- Tell Black Magic probe to use the reset pin before scanning
+  [#1301] (https://github.com/paparazzi/paparazzi/pull/1301)
+- Optitrack/Natnet: Implement smaller GPS messages from NATNET to PPRZ
+  [#1308] (https://github.com/paparazzi/paparazzi/pull/1308)
+- Paparazzi Center: update list of settings on build
+  [#1331] (https://github.com/paparazzi/paparazzi/issues/1331)
+- Paparazzi Center: add reload button
+  [#1359] (https://github.com/paparazzi/paparazzi/pull/1359)
+- Paparazzi Center: easily create new aircraft by copying existing aircraft
+  [#1209] (https://github.com/paparazzi/paparazzi/issues/1209)
+- python messages parser: add unit conversion coeffs
+  [#1340] (https://github.com/paparazzi/paparazzi/pull/1340)
+- server: increase maximum Ivy message length for use with many settings
+  [#1344] (https://github.com/paparazzi/paparazzi/issues/1344)
+- flight plans: add exec attribute to exceptions
+  [#1347] (https://github.com/paparazzi/paparazzi/pull/1347)
+- python: compare and test different attitude reference models
+  [#1357] (https://github.com/paparazzi/paparazzi/pull/1357)
+- GCS: only print bat warning every 10s
+  [#1358] (https://github.com/paparazzi/paparazzi/pull/1358)
+- GCS: kill confirmation opitional with -no_confirm_kill option
+  [#873] (https://github.com/paparazzi/paparazzi/issues/873)
+- GCS: load KML sectors for display in GCS
+  [#404] (https://github.com/paparazzi/paparazzi/issues/404)
+- GCS: fix zoom of video papget
+  [#889] (https://github.com/paparazzi/paparazzi/issues/889)
+- generators: check waypoint altitude against SRTM data
+  [#1361] (https://github.com/paparazzi/paparazzi/pull/1361)
+- Add ADS-B parser and handling of INTRUDERS
+  [#1372] (https://github.com/paparazzi/paparazzi/pull/1372)
+- logalizer: replay ground messages
+  [#1380] (https://github.com/paparazzi/paparazzi/pull/1380)
+- messages: support multiple variable length arrays in telemetry
+  [#1385] (https://github.com/paparazzi/paparazzi/pull/1385)
+- Docker: fix script to run Docker on OSX (with X-access)
+  [#1425] (https://github.com/paparazzi/paparazzi/pull/1425)
+- python: fix messages/settings with wxgtk3.0
+  [#1435] (https://github.com/paparazzi/paparazzi/issues/1435)
+- flight plans for fixedwing: force UTM zone of waypoints to same as ref point to fix waypoints across two UTM zones
+  [#303] (https://github.com/paparazzi/paparazzi/issues/303)
+- realtime plotter: fix issue on Ubuntu with Unity
+  [#1446] (https://github.com/paparazzi/paparazzi/issues/1446)
+
+Airborne
+--------
+
+- INS: vertical filter: rename VF_FLOAT_x defines to VFF_x
+- persistent_settings: add settings_clear
+  [#1309] (https://github.com/paparazzi/paparazzi/pull/1309)
+- electrical: fix non-real number possibility in current calculation
+  [#1314] (https://github.com/paparazzi/paparazzi/pull/1314)
+- electrical: improve current estimation with MILLIAMP_AT_IDLE_THROTTLE
+  [#1319] (https://github.com/paparazzi/paparazzi/pull/1319)
+- energy control: use ABI instead of IMU struct
+  [#1324] (https://github.com/paparazzi/paparazzi/pull/1324)
+- state interface: pass basic types by value
+  [#1330] (https://github.com/paparazzi/paparazzi/pull/1330)
+- settings: mark a lot more settings as persistent
+  [#1345] (https://github.com/paparazzi/paparazzi/pull/1345)
+- add OPTICAL_FLOW and VELOCITY_ESTIMATE ABI messages
+  [#1350] (https://github.com/paparazzi/paparazzi/pull/1350)
+- INS: use opticflow/VELOCITY_ESTIMATE in filter
+  [#1387] (https://github.com/paparazzi/paparazzi/issues/1387)
+  [#1412] (https://github.com/paparazzi/paparazzi/pull/1412)
+- radio_control: change spektrum and superbitrf channel signs to conform to standard
+  [#1403] (https://github.com/paparazzi/paparazzi/pull/1403)
+- actuators: add Spektrum output actuators
+  [#1411] (https://github.com/paparazzi/paparazzi/pull/1411)
+- actuators: new AscTec ESC I2C protocol
+  [#1416] (https://github.com/paparazzi/paparazzi/pull/1416)
+- periodic telemetry: possibility to register periodic message multiple times
+  [#1440] (https://github.com/paparazzi/paparazzi/pull/1440)
+- AHRS/messages: add component/filter ID to AHRS messages
+  [#1441] (https://github.com/paparazzi/paparazzi/pull/1441)
+- peridic telemetry: use msg ID instead of strings for matching (reduces size) and add support for mavlink
+  [#1448] (https://github.com/paparazzi/paparazzi/pull/1448)
+- math: possibility to compress sine table for flash and RAM
+  [#1452] (https://github.com/paparazzi/paparazzi/pull/1452)
+
+Rotorcraft firmware
+-------------------
+
+- navigation: tunable navigation parameters in airframe file
+  [#1315] (https://github.com/paparazzi/paparazzi/pull/1315)
+- guidance: add a flip mode
+  [#1352] (https://github.com/paparazzi/paparazzi/pull/1352)
+- guidance: add outer loop INDI control
+  [#1354] (https://github.com/paparazzi/paparazzi/pull/1354)
+- stabilization: refactor attitude reference generation and runtime adjustable saturation
+  [#1374] (https://github.com/paparazzi/paparazzi/pull/1374)
+  [#1382] (https://github.com/paparazzi/paparazzi/pull/1382)
+- radio control: possibility to use two 2way switches for mode
+  [#1375] (https://github.com/paparazzi/paparazzi/pull/1375)
+- support dual-mcu setup with split autopilot (AP) and FlyByWire (FBW)
+  [#1423] (https://github.com/paparazzi/paparazzi/pull/1423)
+- support for helicopter/swashplate mixing and throttle curves
+  [#1437] (https://github.com/paparazzi/paparazzi/pull/1437)
+- tmtc/server: set course correctly from east/north velocity for correct ACINFO
+  [#1449] (https://github.com/paparazzi/paparazzi/pull/1449)
+- possibility to use NAV mode without GPS (define NO_GPS_NEEDED_FOR_NAV)
+  [#1451] (https://github.com/paparazzi/paparazzi/issues/1451)
+
+Modules
+-------
+
+- video_rtp_stream: make sending via RTP configurable and fix netcat option
+  [#1293] (https://github.com/paparazzi/paparazzi/pull/1293)
+  [#1426] (https://github.com/paparazzi/paparazzi/pull/1426)
+- video_exif: Add GPS coordinates in JPEG images
+  [#1311] (https://github.com/paparazzi/paparazzi/pull/1311)
+- bebop_front_camera: front camera streaming at low resolution
+  [#1313] (https://github.com/paparazzi/paparazzi/pull/1313)
+- stereocam module: decode TUDelft stereocam messages
+  [#1317] (https://github.com/paparazzi/paparazzi/pull/1317)
+  [#1342] (https://github.com/paparazzi/paparazzi/pull/1342)
+  [#1362] (https://github.com/paparazzi/paparazzi/pull/1362)
+  [#1433] (https://github.com/paparazzi/paparazzi/pull/1433)
+- digital_cam_video: trigger video_rtp_stream to store JPEG images
+  [#1323] (https://github.com/paparazzi/paparazzi/pull/1323)
+- cv_qrcode: read QR code using libzbar
+  [#1327] (https://github.com/paparazzi/paparazzi/pull/1327)
+- video_thread: simple framework to read video and add other computer vision modules
+  [#1328] (https://github.com/paparazzi/paparazzi/pull/1328)
+- opticflow: add linear optical flow fit
+  [#1332] (https://github.com/paparazzi/paparazzi/pull/1332)
+- cv_blob_locator: Find a colored item and track its geo-location and update a waypoint to it
+  [#1348] (https://github.com/paparazzi/paparazzi/pull/1348)
+- dropzone: select a dropzone
+  [#1356] (https://github.com/paparazzi/paparazzi/pull/1356)
+- logger_sd_spi_direct: high speed logging to SD Card (via SPI)
+  [#1392] (https://github.com/paparazzi/paparazzi/pull/1392)
+- cleanup configure options for SPI/I2C devices
+  [#1424] (https://github.com/paparazzi/paparazzi/pull/1424)
+- mavlink: modify waypoints and add Paparazzi specific SCRIPT messages to change blocks
+  [#1422] (https://github.com/paparazzi/paparazzi/pull/1422)
+  [#1434] (https://github.com/paparazzi/paparazzi/pull/1434)
+
+Simulation
+----------
+
+- fixedwing sim: fix datalink_time
+  [#1394] (https://github.com/paparazzi/paparazzi/pull/1394)
+- NPS: use UDP for telemetry/datalink
+  [#1404] (https://github.com/paparazzi/paparazzi/pull/1404)
+
+Drivers/HW support
+------------------
+
+- peripherals: hmc58xx: only set data available if measurements were valid
+- imu: booz2 v1.2 has HMC5843
+  [#1300] (https://github.com/paparazzi/paparazzi/pull/1300)
+- STM32F4: added support for persistent settings
+  [#1302] (https://github.com/paparazzi/paparazzi/pull/1302)
+- telemetry via Bluegiga bluetooth module (SPI)
+  [#1303] (https://github.com/paparazzi/paparazzi/pull/1303)
+  [#1325] (https://github.com/paparazzi/paparazzi/pull/1325)
+  [#1365] (https://github.com/paparazzi/paparazzi/pull/1365)
+  [#1388] (https://github.com/paparazzi/paparazzi/pull/1388)
+  [#1401] (https://github.com/paparazzi/paparazzi/pull/1401)
+- INS: Vectornav VN-200 driver
+  [#1318] (https://github.com/paparazzi/paparazzi/pull/1318)
+- apogee: IMU: test_baro_board with IMU
+  [#1310] (https://github.com/paparazzi/paparazzi/pull/1310/commits)
+- Bebop: bottom camera with VGA resolution
+  [#1316] (https://github.com/paparazzi/paparazzi/pull/1316)
+- Parrot drones: easier switching between bottom and front cameras
+  [#1333] (https://github.com/paparazzi/paparazzi/pull/1333)
+- Bebop: fix RPM measurements
+  [#1400] (https://github.com/paparazzi/paparazzi/pull/1400)
+- support for Bebop2
+  [#1429] (https://github.com/paparazzi/paparazzi/pull/1429)
+- Improve Piksi GPS (DGPS, RTK) support
+  [#1349] (https://github.com/paparazzi/paparazzi/pull/1349)
+  [#1386] (https://github.com/paparazzi/paparazzi/pull/1386)
+- STM32: fix ADC bug when trying to use higher channels
+  [#1366] (https://github.com/paparazzi/paparazzi/pull/1366)
+- STM32: fix SPI slave initialization
+  [#1371] (https://github.com/paparazzi/paparazzi/pull/1371)
+- boards: support for naze32, CC3D and CJMCU
+  [#1452] (https://github.com/paparazzi/paparazzi/pull/1452)
+
 Paparazzi 5.6.0_stable
 ======================
 

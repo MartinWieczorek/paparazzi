@@ -37,7 +37,16 @@
 #include "mcu_periph/uart.h"
 
 // for definition of baud rates
+#if !USE_ARBITRARY_BAUDRATE
 #include <termios.h>
+#else
+#include <linux/termios.h>
+#endif
+
+// strange speed for SBUS
+#ifndef B100000
+#define B100000 100000
+#endif
 
 // for conversion between linux baud rate definition and actual speed
 static inline int uart_speed(int def)
@@ -50,9 +59,12 @@ static inline int uart_speed(int def)
     case B19200: return 19200;
     case B38400: return 38400;
     case B57600: return 57600;
+    case B100000: return 100000;
     case B115200: return 115200;
     case B230400: return 230400;
+#ifdef B921600
     case B921600: return 921600;
+#endif
     default: return 9600;
   }
 }

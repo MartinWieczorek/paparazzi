@@ -36,7 +36,7 @@ type inflight_calib = {
 
 type rc_status = string
 type rc_mode = string
-type fbw = { mutable rc_status : rc_status; mutable rc_mode : rc_mode; mutable rc_rate : int; mutable pprz_mode_msgs_since_last_fbw_status_msg : int; }
+type fbw = { mutable fbw_bat : float; mutable rc_status : rc_status; mutable rc_mode : rc_mode; mutable rc_rate : int; mutable pprz_mode_msgs_since_last_fbw_status_msg : int; }
 val gps_nb_channels : int
 type svinfo = {
     svid : int;
@@ -144,8 +144,10 @@ type aircraft = {
     mutable last_msg_date : float;
     mutable time_since_last_survey_msg : float;
     mutable dist_to_wp : float;
-    inflight_calib : inflight_calib
+    inflight_calib : inflight_calib;
+    mutable ap_modes : string array option
 }
 
 val new_aircraft : string -> string -> Xml.xml -> Xml.xml -> aircraft
 val max_nb_dl_setting_values : int
+val modes_of_aircraft : aircraft -> string array
